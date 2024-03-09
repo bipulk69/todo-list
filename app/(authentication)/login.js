@@ -1,4 +1,5 @@
 import {
+  Alert,
   KeyboardAvoidingView,
   Pressable,
   SafeAreaView,
@@ -7,22 +8,67 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (token) {
+          router.replace("/(tabs)/home");
+        }
+      } catch (err) {
+        console.log(err);
+        return res.staus(400).json({
+          message: "Error",
+        });
+      }
+    };
+    checkLoginStatus();
+  });
+
+  const handleLogin = () => {
+    const user = {
+      email: email,
+      password: password,
+    };
+
+    axios
+      .post("http://localhost:3000/login", user)
+      .then((res) => {
+        const token = res.data.token;
+        AsyncStorage.setItem("authToken", token);
+
+        router.replace("/(tabs)/home");
+
+        // console.log(res.data);
+        // Alert.alert("User logged in successfully");
+        setEmail("");
+        setPassword("");
+      })
+      .catch((err) => {
+        Alert.alert("Error logging in user");
+        console.log("Error", err);
+      });
+  };
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
     >
       <View style={{ marginTop: 100 }}>
         <Text style={{ fontSize: 18, fontWeight: "600", color: "#0066b2" }}>
-          TODO-LIST! TRACKER..!
+          TODO-LIST, TRACKER..!
         </Text>
       </View>
 
@@ -111,6 +157,7 @@ const login = () => {
 
           <View style={{ marginTop: 60 }}>
             <Pressable
+              onPress={handleLogin}
               style={{
                 width: 200,
                 backgroundColor: "#6699CC",

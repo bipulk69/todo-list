@@ -1,4 +1,5 @@
 import {
+  Alert,
   KeyboardAvoidingView,
   Pressable,
   SafeAreaView,
@@ -12,12 +13,36 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { FontAwesome6 } from "@expo/vector-icons";
+import axios from "axios";
 
 const register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
+  const handleRegister = () => {
+    const user = {
+      name: name,
+      email: email,
+      password: password,
+    };
+
+    axios
+      .post("http://localhost:3000/register", user)
+      .then((res) => {
+        console.log(res.data);
+        Alert.alert("User registered successfully!");
+        setEmail("");
+        setPassword("");
+        setName("");
+      })
+      .catch((err) => {
+        Alert.alert("Error registering user");
+        console.log("Error", err);
+      });
+  };
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
@@ -129,6 +154,7 @@ const register = () => {
 
           <View style={{ marginTop: 60 }}>
             <Pressable
+              onPress={handleRegister}
               style={{
                 width: 200,
                 backgroundColor: "#6699CC",

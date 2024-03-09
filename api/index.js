@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+
 const User = require("./models/user");
 const Todo = require("./models/todos");
 const jwt = require("jsonwebtoken");
@@ -68,6 +69,14 @@ app.post("/register", async (req, res) => {
   }
 });
 
+// Generate secret key
+const generateSecretKey = () => {
+  const secretKey = crypto.randomBytes(32).toString("hex");
+  return secretKey;
+};
+
+const secretKey = generateSecretKey();
+
 // Login
 app.post("/login", async (req, res) => {
   try {
@@ -95,8 +104,11 @@ app.post("/login", async (req, res) => {
       });
     }
 
+    const token = jwt.sign({ userId: user._id }, secretKey);
+
     res.status(200).json({
       message: "User logged in successfully",
+      generatedToken: token,
       status: "success",
     });
   } catch (e) {
