@@ -13,11 +13,38 @@ import { Feather } from "@expo/vector-icons";
 import { BottomModal } from "react-native-modals";
 import { ModalTitle, ModalContent } from "react-native-modals";
 import { SlideAnimation } from "react-native-modals";
+import { Ionicons } from "@expo/vector-icons";
 
 const index = () => {
   const todos = [];
   const [isModalVisible, setModalVisible] = useState(false);
   const [todo, setTodo] = useState("");
+  const suggestions = [
+    {
+      id: "0",
+      todo: "Drink Water, keep healthy",
+    },
+    {
+      id: "1",
+      todo: "Go Excercising",
+    },
+    {
+      id: "2",
+      todo: "Go to bed early",
+    },
+    {
+      id: "3",
+      todo: "Take pill reminder",
+    },
+    {
+      id: "4",
+      todo: "Go Shopping",
+    },
+    {
+      id: "5",
+      todo: "finish assignments",
+    },
+  ];
   return (
     <>
       <View
@@ -67,7 +94,12 @@ const index = () => {
         </Pressable>
 
         <Pressable>
-          <Feather name="plus-circle" size={30} color="#007FFF" />
+          <Feather
+            onPress={() => setModalVisible(!isModalVisible)}
+            name="plus-circle"
+            size={30}
+            color="#007FFF"
+          />
         </Pressable>
       </View>
 
@@ -103,7 +135,10 @@ const index = () => {
                 No Tasks for today! add a task
               </Text>
 
-              <Pressable style={{ marginTop: 15 }}>
+              <Pressable
+                onPress={() => setModalVisible(!isModalVisible)}
+                style={{ marginTop: 15 }}
+              >
                 <Feather name="plus-circle" size={30} color="#007FFF" />
               </Pressable>
             </View>
@@ -116,7 +151,7 @@ const index = () => {
         onHardwareBackPress={() => setModalVisible(!isModalVisible)}
         swipeDirection={["up", "down"]}
         swipeThreshold={200}
-        modalTitle={<modalTitle title="Add todo" />}
+        modalTitle={<ModalTitle title="Add todo" />}
         modalAnimation={
           new SlideAnimation({
             slideFrom: "bottom",
@@ -125,13 +160,100 @@ const index = () => {
         visible={isModalVisible}
         onTouchOutside={() => setModalVisible(!isModalVisible)}
       >
-        <ModalContent style={{ width: "100%", height: 200 }}>
-          <View>
+        <ModalContent style={{ width: "100%", height: 280 }}>
+          <View
+            style={{
+              marginVertical: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
             <TextInput
+              style={{
+                padding: 10,
+                borderColor: "#E0E0E0",
+                borderWidth: 1,
+                borderRadius: 5,
+                flex: 1,
+              }}
               value={todo}
               onChangeText={(text) => setTodo(text)}
               placeholder="Input a new task"
             />
+            <Ionicons name="send" size={24} color="#007FFF" />
+          </View>
+
+          <Text>Choose Category</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 10,
+              marginVertical: 10,
+            }}
+          >
+            <Pressable
+              style={{
+                borderColor: "#E0E0E0",
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderWidth: 1,
+                borderRadius: 25,
+              }}
+            >
+              <Text>Work</Text>
+            </Pressable>
+
+            <Pressable
+              style={{
+                borderColor: "#E0E0E0",
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderWidth: 1,
+                borderRadius: 25,
+              }}
+            >
+              <Text>Personal</Text>
+            </Pressable>
+
+            <Pressable
+              style={{
+                borderColor: "#E0E0E0",
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderWidth: 1,
+                borderRadius: 25,
+              }}
+            >
+              <Text>Wishlist</Text>
+            </Pressable>
+          </View>
+
+          <Text>Some suggestions</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flexWrap: "wrap",
+              marginVertical: 10,
+              gap: 10,
+            }}
+          >
+            {suggestions?.map((item, index) => (
+              <Pressable
+                style={{
+                  backgroundColor: "#f0f8ff",
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                  borderRadius: 25,
+                  textAlign: "center",
+                }}
+                key={index}
+              >
+                <Text>{item?.todo}</Text>
+              </Pressable>
+            ))}
           </View>
         </ModalContent>
       </BottomModal>
