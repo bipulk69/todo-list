@@ -1,16 +1,23 @@
 import {
   Image,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Feather } from "@expo/vector-icons";
+import { BottomModal } from "react-native-modals";
+import { ModalTitle, ModalContent } from "react-native-modals";
+import { SlideAnimation } from "react-native-modals";
 
 const index = () => {
   const todos = [];
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [todo, setTodo] = useState("");
   return (
     <>
       <View
@@ -103,6 +110,31 @@ const index = () => {
           )}
         </View>
       </ScrollView>
+
+      <BottomModal
+        onBackdropPress={() => setModalVisible(!isModalVisible)}
+        onHardwareBackPress={() => setModalVisible(!isModalVisible)}
+        swipeDirection={["up", "down"]}
+        swipeThreshold={200}
+        modalTitle={<modalTitle title="Add todo" />}
+        modalAnimation={
+          new SlideAnimation({
+            slideFrom: "bottom",
+          })
+        }
+        visible={isModalVisible}
+        onTouchOutside={() => setModalVisible(!isModalVisible)}
+      >
+        <ModalContent style={{ width: "100%", height: 200 }}>
+          <View>
+            <TextInput
+              value={todo}
+              onChangeText={(text) => setTodo(text)}
+              placeholder="Input a new task"
+            />
+          </View>
+        </ModalContent>
+      </BottomModal>
     </>
   );
 };

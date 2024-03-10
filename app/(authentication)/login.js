@@ -51,9 +51,6 @@ const login = () => {
         AsyncStorage.setItem("authToken", token);
 
         router.replace("/(tabs)/home");
-
-        // console.log(res.data);
-        // Alert.alert("User logged in successfully");
         setEmail("");
         setPassword("");
       })
