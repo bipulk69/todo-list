@@ -8,17 +8,22 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { BottomModal } from "react-native-modals";
 import { ModalTitle, ModalContent } from "react-native-modals";
 import { SlideAnimation } from "react-native-modals";
 import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
 
 const index = () => {
-  const todos = [];
+  const [todos, setTodos] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [category, setCategory] = useState("All");
   const [todo, setTodo] = useState("");
+  const [pendingTodos, setPendingTodos] = useState([]);
+  const [completedTodos, setCompletedTodos] = useState([]);
+
   const suggestions = [
     {
       id: "0",
@@ -45,6 +50,62 @@ const index = () => {
       todo: "finish assignments",
     },
   ];
+
+  const addTodo = async () => {
+    try {
+      const todoDate = {
+        title: todo,
+        category: category,
+      };
+
+      axios
+        .post("http://localhost:3000/todos/65ed473b318aaa921749adc2", todoDate)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+
+    setModalVisible(!isModalVisible);
+    setTodo("");
+  };
+
+  useEffect(() => {
+    getUserTodos();
+  }, []);
+
+  const getUserTodos = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/users/65ed473b318aaa921749adc2/todos`
+      );
+      console.log(response.data.todos);
+      setTodos(response.data.todos);
+
+      const fetchedTodos = response.data.todos || [];
+      const pending = fetchedTodos.filter((todo) => todo.status === "pending");
+
+      const completed = fetchedTodos.filter(
+        (todo) => todo.staus === "completed"
+      );
+
+      setPendingTodos(pending);
+      setCompletedTodos(completed);
+
+      console.log("Pending:", pending);
+      console.log("Completed", completed);
+    } catch (e) {
+      console.log(e);
+      return res.status(500).json({
+        messsage: "Internal server error",
+        staus: "error",
+      });
+    }
+  };
   return (
     <>
       <View
@@ -181,7 +242,7 @@ const index = () => {
               onChangeText={(text) => setTodo(text)}
               placeholder="Input a new task"
             />
-            <Ionicons name="send" size={24} color="#007FFF" />
+            <Ionicons onPress={addTodo} name="send" size={24} color="#007FFF" />
           </View>
 
           <Text>Choose Category</Text>
@@ -194,6 +255,7 @@ const index = () => {
             }}
           >
             <Pressable
+              onPress={() => setCategory("Work")}
               style={{
                 borderColor: "#E0E0E0",
                 paddingHorizontal: 10,
@@ -206,6 +268,7 @@ const index = () => {
             </Pressable>
 
             <Pressable
+              onPress={() => setCategory("Personal")}
               style={{
                 borderColor: "#E0E0E0",
                 paddingHorizontal: 10,
@@ -218,6 +281,7 @@ const index = () => {
             </Pressable>
 
             <Pressable
+              onPress={() => setCategory("Wishlist")}
               style={{
                 borderColor: "#E0E0E0",
                 paddingHorizontal: 10,
@@ -242,6 +306,7 @@ const index = () => {
           >
             {suggestions?.map((item, index) => (
               <Pressable
+                onPress={() => setTodo(item?.todo)}
                 style={{
                   backgroundColor: "#f0f8ff",
                   paddingHorizontal: 10,
