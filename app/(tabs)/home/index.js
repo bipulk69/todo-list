@@ -95,9 +95,6 @@ const index = () => {
 
       setPendingTodos(pending);
       setCompletedTodos(completed);
-
-      console.log("Pending:", pending);
-      console.log("Completed", completed);
     } catch (e) {
       console.log(e);
       return res.status(500).json({
@@ -106,6 +103,16 @@ const index = () => {
       });
     }
   };
+
+  const markTodoAsCompleted = async (todoId) => {
+    try {
+      cons;
+    } catch (e) {
+      console.log("error: ", e);
+    }
+  };
+  // console.log("Pending:", pending);
+  // console.log("Completed", completed);
   return (
     <>
       <View
